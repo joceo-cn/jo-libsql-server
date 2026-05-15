@@ -89,8 +89,13 @@ else
 fi
 
 # 7. 获取访问信息
-IP_ADDR=$(hostname -I | awk '{print $1}')
-[ -z "$IP_ADDR" ] && IP_ADDR="127.0.0.1"
+HOST=$(grep '"host":' "$INSTALL_DIR/config.json" | sed -E 's/.*"host": "([^"]+)".*/\1/')
+if [ "$HOST" = "0.0.0.0" ]; then
+    IP_ADDR=$(hostname -I | awk '{print $1}')
+    [ -z "$IP_ADDR" ] && IP_ADDR="127.0.0.1"
+else
+    IP_ADDR="$HOST"
+fi
 PORT=$(grep '"port":' "$INSTALL_DIR/config.json" | sed -E 's/.*: ([0-9]+).*/\1/')
 [ -z "$PORT" ] && PORT="12358"
 ADMIN_PATH=$(grep '"admin_path":' "$INSTALL_DIR/config.json" | sed -E 's/.*"admin_path": "([^"]+)".*/\1/')
