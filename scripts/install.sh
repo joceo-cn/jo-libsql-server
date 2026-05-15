@@ -64,12 +64,14 @@ Description=Jo-Libsql-Server Service (JLS)
 After=network.target
 
 [Service]
-Type=simple
+Type=idle
 User=root
 WorkingDirectory=$INSTALL_DIR
 ExecStart=$INSTALL_DIR/$BINARY_NAME
 Restart=always
 RestartSec=5
+Nice=19
+IOSchedulingPriority=7
 StandardOutput=append:$INSTALL_DIR/logs/system.log
 StandardError=append:$INSTALL_DIR/logs/system.log
 

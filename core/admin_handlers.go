@@ -13,7 +13,6 @@ import (
 	"time"
 )
 
-
 // adminSecret 内部鉴权密钥
 var adminSecret = "joceo-secret-2026"
 
@@ -34,7 +33,7 @@ func handleAdminLogin(w http.ResponseWriter, r *http.Request) {
 		payload := fmt.Sprintf("%s.%d", creds.User, ts)
 		sig := generateSig(payload)
 		token := base64.StdEncoding.EncodeToString([]byte(payload + "." + sig))
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"token": token})
 		return
@@ -89,7 +88,7 @@ func handleAdminConfig(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(GlobalConfig)
 		return
 	}
-	
+
 	if r.Method == http.MethodPost {
 		var newCfg Config
 		if err := json.NewDecoder(r.Body).Decode(&newCfg); err != nil {
@@ -105,12 +104,10 @@ func handleAdminConfig(w http.ResponseWriter, r *http.Request) {
 		GlobalConfig.AdminPass = newCfg.AdminPass
 		GlobalConfig.LogLevel = newCfg.LogLevel
 
-
-		
 		// 持久化到文件
 		data, _ := json.MarshalIndent(GlobalConfig, "", "    ")
 		_ = os.WriteFile("config.json", data, 0644)
-		
+
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -136,20 +133,20 @@ func handleAdminTables(w http.ResponseWriter, r *http.Request) {
 		dbName = r.URL.Query().Get("namespace")
 	}
 	token := GlobalConfig.Databases[dbName]
-	
+
 	db, err := GetOrMountDB(dbName, token)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	rows, err := db.Query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
-	
+
 	var tables []string
 	for rows.Next() {
 		var name string
@@ -168,21 +165,21 @@ func handleAdminData(w http.ResponseWriter, r *http.Request) {
 	}
 	tableName := r.URL.Query().Get("table")
 	token := GlobalConfig.Databases[dbName]
-	
+
 	db, err := GetOrMountDB(dbName, token)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	resultSet, err := runQuery(db, fmt.Sprintf("SELECT rowid, * FROM \"%s\" LIMIT 100", tableName), nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	var res struct {
-		Cols []string   `json:"cols"`
+		Cols []string        `json:"cols"`
 		Rows [][]interface{} `json:"rows"`
 	}
 	for _, col := range resultSet.Cols {
@@ -195,7 +192,7 @@ func handleAdminData(w http.ResponseWriter, r *http.Request) {
 		}
 		res.Rows = append(res.Rows, rRow)
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
@@ -281,11 +278,11 @@ func handleAdminDB(w http.ResponseWriter, r *http.Request) {
 // handleAdminStats 获取所有数据库的资产统计信息
 func handleAdminStats(w http.ResponseWriter, r *http.Request) {
 	type DBInfo struct {
-		Name      string `json:"name"`
-		Size      int64  `json:"size"`
-		Tables    int    `json:"tables"`
-		Rows      int64  `json:"rows"`
-		Calls     uint64 `json:"calls"`
+		Name   string `json:"name"`
+		Size   int64  `json:"size"`
+		Tables int    `json:"tables"`
+		Rows   int64  `json:"rows"`
+		Calls  uint64 `json:"calls"`
 	}
 
 	var stats struct {
@@ -341,7 +338,7 @@ func handleAdminVacuum(w http.ResponseWriter, r *http.Request) {
 		dbName = r.URL.Query().Get("namespace")
 	}
 	token := GlobalConfig.Databases[dbName]
-	
+
 	db, err := GetOrMountDB(dbName, token)
 	if err != nil {
 		http.Error(w, "DB not found", http.StatusNotFound)
@@ -386,11 +383,7 @@ func handleAdminLogs(w http.ResponseWriter, r *http.Request) {
 	if len(lines) > 5000 {
 		start = len(lines) - 5000
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"logs": strings.Join(lines[start:], "\n")})
 }
-
-
-
-
