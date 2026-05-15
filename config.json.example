@@ -1,0 +1,12 @@
+{
+    "port": 12358,
+    "host": "127.0.0.1",
+    "db_path": "data",
+    "admin_path": "admin",
+    "db": {
+        "example.db": "your-token-here"
+    },
+    "log_level": "INFO",
+    "admin_user": "admin",
+    "admin_pass": "password"
+}

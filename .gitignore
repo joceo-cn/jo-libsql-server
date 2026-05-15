@@ -1,0 +1,22 @@
+# Binaries
+/jo-libsql-server
+/jo-libsql-server.exe
+/dist/
+
+# Configuration
+
+# Databases
+/data/
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+/logs/
+*.log
+
+# Temporary files
+/tmp/
+/.doc/
+.DS_Store
+Thumbs.db

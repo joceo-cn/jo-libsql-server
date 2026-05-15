@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joceo AI | 超级管理后台</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- 登录遮罩 -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2 style="margin-top: 0;">管理登录</h2>
+            <div style="display: grid; gap: 15px; margin-top: 25px;">
+                <input type="text" id="admin-user" placeholder="管理员账号">
+                <input type="password" id="admin-pass" placeholder="管理员密码">
+                <button class="btn-primary" onclick="adminLogin()">进入系统</button>
+            </div>
+            <p id="login-msg" style="color: var(--danger); font-size: 12px; margin-top: 15px;"></p>
+        </div>
+    </div>
+
+    <!-- 主框架 -->
+    <div class="app-container" id="app-frame" style="display: none;">
+        <aside>
+            <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>JOCEO ADMIN</span>
+                <button class="action-btn" title="新建数据库" onclick="showDBModal()">➕ 新建</button>
+            </div>
+            <div class="tree-view" id="db-tree">
+                <!-- 目录树动态加载 -->
+                <div style="padding: 20px; color: var(--text-dim); font-size: 12px;">加载中...</div>
+            </div>
+            <div style="padding: 20px; border-top: 1px solid var(--border);">
+                <div class="tree-label" onclick="renderDashboard()">
+                    <span>📊</span> 控制台
+                </div>
+                <div class="tree-label" style="margin-top: 10px;" onclick="showConfig()">
+                    <span>⚙️</span> 系统配置
+                </div>
+                <div class="tree-label" style="margin-top: 10px; color: var(--danger)" onclick="adminLogout()">
+                    <span>🚪</span> 退出登录
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <header class="main-header">
+                <div id="breadcrumb" style="font-weight: 600; font-size: 14px;">欢迎使用 Libsql Server</div>
+                <div style="display: flex; gap: 15px;">
+                    <span id="server-status" style="font-size: 12px; color: var(--success)">● 核心服务在线</span>
+                </div>
+            </header>
+
+            <div class="content-area" id="tab-content">
+                <!-- 动态内容渲染区 -->
+                <div class="glass-card">
+                    <h1 style="margin-top: 0;">概览</h1>
+                    <p>请从左侧选择一个数据库或进入系统资产中心。</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 记录编辑弹窗 -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="edit-modal-title" style="margin-top: 0;">新增记录</h3>
+            <div id="modal-form" style="display: grid; gap: 15px;"></div>
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn-primary" onclick="submitRecord()">提交保存</button>
+                <button class="btn-secondary" style="margin-bottom: 0;" onclick="closeModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据库实例管理弹窗 -->
+    <div id="db-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="db-modal-title" style="margin-top: 0;">数据库配置</h3>
+            <div id="db-modal-form" style="display: grid; gap: 15px;"></div>
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn-primary" onclick="saveDB()">保存配置</button>
+                <button class="btn-secondary" style="margin-bottom: 0;" onclick="closeDbModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 字段设计弹窗 (高级) -->
+    <div id="field-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="field-modal-title">添加新字段</h3>
+            <div id="field-modal-form" style="display:grid; gap:15px; margin-top:20px;">
+                <!-- 动态生成字段表单 -->
+            </div>
+            <div style="margin-top:30px; display:flex; gap:10px; justify-content:flex-end;">
+                <button class="action-btn" onclick="closeFieldModal()">取消</button>
+                <button class="btn-primary" onclick="saveField()">保存字段</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/tree.js"></script>
+    <script src="js/db_manager.js"></script>
+    <script src="js/data_manager.js"></script>
+    <script src="js/schema_manager.js"></script>
+    <script src="js/sql_manager.js"></script>
+    <script src="js/vector_manager.js"></script>
+    <script src="js/stats_manager.js"></script>
+</body>
+
+</html>
